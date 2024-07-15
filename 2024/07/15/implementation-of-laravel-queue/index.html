@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="生产者查看TestJob::dispatch()方法 123456789&#x2F;** * 使用给定参数调度作业 * * @return \Illuminate\Foundation\Bus\PendingDispatch *&#x2F;public static function dispatch(...$arguments)&#123;    return new PendingDispatch(new sta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="laravel队列实现">
+<meta property="og:url" content="http://example.com/2024/07/15/implementation-of-laravel-queue/index.html">
+<meta property="og:site_name" content="dioroxic的博客">
+<meta property="og:description" content="生产者查看TestJob::dispatch()方法 123456789&#x2F;** * 使用给定参数调度作业 * * @return \Illuminate\Foundation\Bus\PendingDispatch *&#x2F;public static function dispatch(...$arguments)&#123;    return new PendingDispatch(new sta">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-15T06:15:45.309Z">
+<meta property="article:modified_time" content="2024-07-15T07:19:03.685Z">
+<meta property="article:author" content="dioroxic">
+<meta property="article:tag" content="laravel">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2024/07/15/implementation-of-laravel-queue/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2024/07/15/implementation-of-laravel-queue/","path":"2024/07/15/implementation-of-laravel-queue/","title":"laravel队列实现"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>laravel队列实现 | dioroxic的博客</title><meta name="robots" content="noindex">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dioroxic的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">a lazy man</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85"><span class="nav-number">1.</span> <span class="nav-text">生产者</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%80%85"><span class="nav-number">2.</span> <span class="nav-text">消费者</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dioroxic"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">dioroxic</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/15/implementation-of-laravel-queue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dioroxic">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="laravel队列实现 | dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          laravel队列实现
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-07-15 14:15:45 / 修改时间：15:19:03" itemprop="dateCreated datePublished" datetime="2024-07-15T14:15:45+08:00">2024-07-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/laravel/" itemprop="url" rel="index"><span itemprop="name">laravel</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h2><p>查看TestJob::dispatch()方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 使用给定参数调度作业</span><br><span class="line"> *</span><br><span class="line"> * @return \Illuminate\Foundation\Bus\PendingDispatch</span><br><span class="line"> */</span><br><span class="line">public static function dispatch(...$arguments)</span><br><span class="line">&#123;</span><br><span class="line">    return new PendingDispatch(new static(...$arguments));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现会实例化PendingDispatch类并将当前调用的job实例化传入到PendingDispatch类</p>
+<p>查看PendingDispatch类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 创建新的挂起作业调度</span><br><span class="line"> *</span><br><span class="line"> * @param  mixed  $job</span><br><span class="line"> * @return void</span><br><span class="line"> */</span><br><span class="line">public function __construct($job)</span><br><span class="line">&#123;</span><br><span class="line">    $this-&gt;job = $job;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 处理对象的破坏</span><br><span class="line"> *</span><br><span class="line"> * @return void</span><br><span class="line"> */</span><br><span class="line">public function __destruct()</span><br><span class="line">&#123;</span><br><span class="line">    if (! $this-&gt;shouldDispatch()) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125; elseif ($this-&gt;afterResponse) &#123;</span><br><span class="line">        app(Dispatcher::class)-&gt;dispatchAfterResponse($this-&gt;job);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        app(Dispatcher::class)-&gt;dispatch($this-&gt;job);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现初始化类的时候会存储job到job属性，然后在对象摧毁的时候调用析构函数发放队列</p>
+<p>查看Dispatcher发现是接口，查看继承找到Illuminate\Bus\Dispatcher类发现服务提供者是Illuminate\Bus\BusServiceProvider</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">use Illuminate\Contracts\Bus\Dispatcher as DispatcherContract;</span><br><span class="line">use Illuminate\Contracts\Bus\QueueingDispatcher as QueueingDispatcherContract;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 注册服务提供商</span><br><span class="line">     *</span><br><span class="line">     * @return void</span><br><span class="line">     */</span><br><span class="line">    public function register()</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;app-&gt;singleton(Dispatcher::class, function ($app) &#123;</span><br><span class="line">            return new Dispatcher($app, function ($connection = null) use ($app) &#123;</span><br><span class="line">                return $app[QueueFactoryContract::class]-&gt;connection($connection); // 返回队列驱动管理（根据config配置返回对应的队列驱动 RedisQueue、DatabaseQueue.......）</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;); // 绑定单例到容器</span><br><span class="line"></span><br><span class="line">        $this-&gt;registerBatchServices();</span><br><span class="line"></span><br><span class="line">        $this-&gt;app-&gt;alias(</span><br><span class="line">            Dispatcher::class, DispatcherContract::class</span><br><span class="line">        ); // 设置别名意味着app(DispatcherContract::class)会解析拿出Dispatcher实例</span><br><span class="line"></span><br><span class="line">        $this-&gt;app-&gt;alias(</span><br><span class="line">            Dispatcher::class, QueueingDispatcherContract::class</span><br><span class="line">        ); // 设置别名意味着app(QueueingDispatcherContract::class)会解析拿出Dispatcher实例</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>找到对应接口实现后查看Illuminate\Bus\Dispatcher类，找到dispatch方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 将命令调度到其相应的处理程序</span><br><span class="line"> *</span><br><span class="line"> * @param  mixed  $command</span><br><span class="line"> * @return mixed</span><br><span class="line"> */</span><br><span class="line">public function dispatch($command)</span><br><span class="line">&#123;</span><br><span class="line">// 判断队列解析程序是否存在和任务是否继承ShouldQueue接口，true走队列，否则直接执行任务</span><br><span class="line">    return $this-&gt;queueResolver &amp;&amp; $this-&gt;commandShouldBeQueued($command)</span><br><span class="line">                    ? $this-&gt;dispatchToQueue($command)</span><br><span class="line">                    : $this-&gt;dispatchNow($command);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后查看dispatchToQueue方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 将命令调度到队列后面的相应处理程序</span><br><span class="line"> *</span><br><span class="line"> * @param  mixed  $command</span><br><span class="line"> * @return mixed</span><br><span class="line"> *</span><br><span class="line"> * @throws \RuntimeException</span><br><span class="line"> */</span><br><span class="line">public function dispatchToQueue($command)</span><br><span class="line">&#123;</span><br><span class="line">    $connection = $command-&gt;connection ?? null; // 任务该用那个驱动默认null的话按照配置文件设置驱动来</span><br><span class="line"></span><br><span class="line">    $queue = call_user_func($this-&gt;queueResolver, $connection);</span><br><span class="line"></span><br><span class="line">    if (! $queue instanceof Queue) &#123;</span><br><span class="line">        throw new RuntimeException(&#x27;Queue resolver did not return a Queue implementation.&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (method_exists($command, &#x27;queue&#x27;)) &#123;</span><br><span class="line">        return $command-&gt;queue($queue, $command);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 推送任务到队列</span><br><span class="line">    return $this-&gt;pushCommandToQueue($queue, $command);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现会先获取队列驱动然后再根据驱动来推送任务（我这里是redis），然后查看pushCommandToQueue方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 将命令推送到给定的队列实例上</span><br><span class="line"> *</span><br><span class="line"> * @param  \Illuminate\Contracts\Queue\Queue  $queue</span><br><span class="line"> * @param  mixed  $command</span><br><span class="line"> * @return mixed</span><br><span class="line"> */</span><br><span class="line">protected function pushCommandToQueue($queue, $command)</span><br><span class="line">&#123;</span><br><span class="line">    if (isset($command-&gt;queue, $command-&gt;delay)) &#123; // 判断任务是否设置了指定队列名称和延时时间</span><br><span class="line">        return $queue-&gt;laterOn($command-&gt;queue, $command-&gt;delay, $command);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (isset($command-&gt;queue)) &#123; // 判断任务是否设置了指定队列名称</span><br><span class="line">        return $queue-&gt;pushOn($command-&gt;queue, $command);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (isset($command-&gt;delay)) &#123; // 判断任务是否设置了延时时间</span><br><span class="line">        return $queue-&gt;later($command-&gt;delay, $command);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return $queue-&gt;push($command);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里先看下push和later方法，这两个方法分别是没有设置延时时间的队列和设置了延时时间队列，两者推送的redis数据类型不一样前者用的是list后者用的是zset。</p>
+<p>先看push也就是list类型的队列，查找push方法发现跳转的接口查看具体实现，有redis、数据库等等，我设置的是redis所以看redis，找到RedisQueue下的push方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 将新作业推送到队列中</span><br><span class="line"> *</span><br><span class="line"> * @param  object|string  $job</span><br><span class="line"> * @param  mixed  $data</span><br><span class="line"> * @param  string|null  $queue</span><br><span class="line"> * @return mixed</span><br><span class="line"> */</span><br><span class="line">public function push($job, $data = &#x27;&#x27;, $queue = null)</span><br><span class="line">&#123;</span><br><span class="line">    return $this-&gt;enqueueUsing(</span><br><span class="line">        $job,</span><br><span class="line">        $this-&gt;createPayload($job, $this-&gt;getQueue($queue), $data), // 序列化任务的一些信息</span><br><span class="line">        $queue,</span><br><span class="line">        null,</span><br><span class="line">        function ($payload, $queue) &#123; // 把任务放入队列的回调函数</span><br><span class="line">            return $this-&gt;pushRaw($payload, $queue);</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>push会先序列化任务的一些信息然后再把序列化的信息传给最后一个参数回调函数，查看pushRaw函数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">    /**</span><br><span class="line">     * 将原始负载推送到队列中</span><br><span class="line">     *</span><br><span class="line">     * @param  string  $payload</span><br><span class="line">     * @param  string|null  $queue</span><br><span class="line">     * @param  array  $options</span><br><span class="line">     * @return mixed</span><br><span class="line">     */</span><br><span class="line">    public function pushRaw($payload, $queue = null, array $options = [])</span><br><span class="line">    &#123;</span><br><span class="line">    // 执行lua脚本实现redis队列放入</span><br><span class="line">        $this-&gt;getConnection()-&gt;eval(</span><br><span class="line">            LuaScripts::push(), 2, $this-&gt;getQueue($queue),</span><br><span class="line">            $this-&gt;getQueue($queue).&#x27;:notify&#x27;, $payload</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        return json_decode($payload, true)[&#x27;id&#x27;] ?? null;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">     * 获取用于将作业推送到队列的 Lua 脚本</span><br><span class="line">     *</span><br><span class="line">     * KEYS[1] - The queue to push the job onto, for example: queues:foo</span><br><span class="line">     * KEYS[2] - The notification list for the queue we are pushing jobs onto, for example: queues:foo:notify</span><br><span class="line">     * ARGV[1] - The job payload</span><br><span class="line">     *</span><br><span class="line">     * @return string</span><br><span class="line">     */</span><br><span class="line">    public static function push()</span><br><span class="line">    &#123;</span><br><span class="line">        return &lt;&lt;&lt;&#x27;LUA&#x27;</span><br><span class="line">-- Push the job onto the queue...</span><br><span class="line">redis.call(&#x27;rpush&#x27;, KEYS[1], ARGV[1])</span><br><span class="line">-- Push a notification onto the &quot;notify&quot; queue...</span><br><span class="line">redis.call(&#x27;rpush&#x27;, KEYS[2], 1)</span><br><span class="line">LUA;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>push 的流程就看完了大概就是先将任务信息序列化然后传给回调函数调用，回调函数调用pushRaw方法lua脚本发放任务。</p>
+<p>接下来看later方法实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 在延迟后将新作业推送到队列中</span><br><span class="line"> *</span><br><span class="line"> * @param  \DateTimeInterface|\DateInterval|int  $delay</span><br><span class="line"> * @param  object|string  $job</span><br><span class="line"> * @param  mixed  $data</span><br><span class="line"> * @param  string|null  $queue</span><br><span class="line"> * @return mixed</span><br><span class="line"> */</span><br><span class="line">public function later($delay, $job, $data = &#x27;&#x27;, $queue = null)</span><br><span class="line">&#123;</span><br><span class="line">    return $this-&gt;enqueueUsing(</span><br><span class="line">        $job,</span><br><span class="line">        $this-&gt;createPayload($job, $this-&gt;getQueue($queue), $data),</span><br><span class="line">        $queue,</span><br><span class="line">        $delay,</span><br><span class="line">        function ($payload, $queue, $delay) &#123;</span><br><span class="line">            return $this-&gt;laterRaw($delay, $payload, $queue);</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 在延迟后将原始作业推送到队列中</span><br><span class="line"> *</span><br><span class="line"> * @param  \DateTimeInterface|\DateInterval|int  $delay</span><br><span class="line"> * @param  string  $payload</span><br><span class="line"> * @param  string|null  $queue</span><br><span class="line"> * @return mixed</span><br><span class="line"> */</span><br><span class="line">protected function laterRaw($delay, $payload, $queue = null)</span><br><span class="line">&#123;</span><br><span class="line">    $this-&gt;getConnection()-&gt;zadd(</span><br><span class="line">        $this-&gt;getQueue($queue).&#x27;:delayed&#x27;, $this-&gt;availableAt($delay), $payload</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    return json_decode($payload, true)[&#x27;id&#x27;] ?? null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>大致都跟push方法一样，唯一不同的是回调函数调用的是laterRaw方法而不是pushRaw方法</p>
+<h2 id="消费者"><a href="#消费者" class="headerlink" title="消费者"></a>消费者</h2><p>通过config&#x2F;app.php providers数组找到ConsoleSupportServiceProvider控制台服务提供者，发现ArtisanServiceProvider找到queue:work命令注册方法registerQueueWorkCommand</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">use Illuminate\Queue\Console\WorkCommand as QueueWorkCommand;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Register the command.</span><br><span class="line"> *</span><br><span class="line"> * @return void</span><br><span class="line"> */</span><br><span class="line">protected function registerQueueWorkCommand()</span><br><span class="line">&#123;</span><br><span class="line">    $this-&gt;app-&gt;singleton(&#x27;command.queue.work&#x27;, function ($app) &#123;</span><br><span class="line">        return new QueueWorkCommand($app[&#x27;queue.worker&#x27;], $app[&#x27;cache.store&#x27;]);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看QueueWorkCommand类(也就是WorkCommand)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public function handle()</span><br><span class="line">  &#123;</span><br><span class="line">      // 是否是维护模式，是的话休眠</span><br><span class="line">      if ($this-&gt;downForMaintenance() &amp;&amp; $this-&gt;option(&#x27;once&#x27;)) &#123;</span><br><span class="line">          return $this-&gt;worker-&gt;sleep($this-&gt;option(&#x27;sleep&#x27;));</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // 监听打印队列状况</span><br><span class="line">      $this-&gt;listenForEvents();</span><br><span class="line"></span><br><span class="line">      // 队列连接名称</span><br><span class="line">      $connection = $this-&gt;argument(&#x27;connection&#x27;)</span><br><span class="line">                      ?: $this-&gt;laravel[&#x27;config&#x27;][&#x27;queue.default&#x27;];</span><br><span class="line"></span><br><span class="line">      // 获取需要处理的队列名称</span><br><span class="line">      $queue = $this-&gt;getQueue($connection);</span><br><span class="line"></span><br><span class="line">      // 运行处理进程</span><br><span class="line">      return $this-&gt;runWorker(</span><br><span class="line">          $connection, $queue</span><br><span class="line">      );</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>查看runWorker方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public function __construct(Worker $worker, Cache $cache)</span><br><span class="line">&#123;</span><br><span class="line">    parent::__construct();</span><br><span class="line"></span><br><span class="line">    $this-&gt;cache = $cache;</span><br><span class="line">    $this-&gt;worker = $worker;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected function runWorker($connection, $queue)</span><br><span class="line">&#123;</span><br><span class="line">    return $this-&gt;worker-&gt;setName($this-&gt;option(&#x27;name&#x27;))</span><br><span class="line">                 -&gt;setCache($this-&gt;cache)</span><br><span class="line">                 -&gt;&#123;$this-&gt;option(&#x27;once&#x27;) ? &#x27;runNextJob&#x27; : &#x27;daemon&#x27;&#125;(</span><br><span class="line">        $connection, $queue, $this-&gt;gatherWorkerOptions()</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现如果有带–once参数则走 Illuminate\Queue\Worker类下的runNextJob方法，没有则走daemon方法，并且传入队列连接名称、队列名称、当前命令参数。查看Illuminate\Queue\Worker下的daemon方法</p>
+<p>首先会去判断是否能加载到pcntl扩展，能的话开始判断进程信号，然后再获取调用queue:restart时的时间戳</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 加载pcntl扩展，然后判断进程信号</span><br><span class="line">if ($supportsAsyncSignals = $this-&gt;supportsAsyncSignals()) &#123;</span><br><span class="line">    /**</span><br><span class="line">      * 当脚本被指示关闭时，会引发SIGTERM。</span><br><span class="line">      * SIGUSR2是用户定义的信号，Laravel用来表示脚本应该暂停。</span><br><span class="line">      * 当暂停的脚本继续进行时，会引发SIGCONT。</span><br><span class="line">      * 这些信号从Process Monitor（如 Supervisor ）发送并与我们的脚本进行通信。</span><br><span class="line">    */</span><br><span class="line">    $this-&gt;listenForSignals();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 获取调用queue:restart时的时间戳</span><br><span class="line">$lastRestart = $this-&gt;getTimestampOfLastQueueRestart();</span><br></pre></td></tr></table></figure>
+
+<p>最后开始循环获取并执行队列中的任务。开始循环时会先检查是否应该暂停脚本或退出杀死脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 检查是否应该暂停脚本</span><br><span class="line">if (! $this-&gt;daemonShouldRun($options, $connectionName, $queue)) &#123;</span><br><span class="line">    $status = $this-&gt;pauseWorker($options, $lastRestart);</span><br><span class="line"></span><br><span class="line">    // 是否应该退出和杀死脚本进程</span><br><span class="line">    if (! is_null($status)) &#123;</span><br><span class="line">        return $this-&gt;stop($status);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    continue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后会开始从队列中获取需要执行的任务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 首先，我们将尝试将下一个工作从队列中取出。我们还将注册超时处理程序并重置此作业的警报，以便它不会永远处于冻结状态。然后，我们可以完成这项工作。</span><br><span class="line">$job = $this-&gt;getNextJob(</span><br><span class="line">    $this-&gt;manager-&gt;connection($connectionName), $queue</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>查看getNextJob方法，该方法接收一个队列连接实例，和队列名称。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">protected function getNextJob($connection, $queue)</span><br><span class="line">&#123;</span><br><span class="line">    $popJobCallback = function ($queue) use ($connection) &#123;</span><br><span class="line">        return $connection-&gt;pop($queue);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        if (isset(static::$popCallbacks[$this-&gt;name])) &#123;</span><br><span class="line">            return (static::$popCallbacks[$this-&gt;name])($popJobCallback, $queue);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        foreach (explode(&#x27;,&#x27;, $queue) as $queue) &#123; // 根据队列名称取出任务</span><br><span class="line">            if (! is_null($job = $popJobCallback($queue))) &#123;</span><br><span class="line">                return $job;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (Throwable $e) &#123;</span><br><span class="line">        $this-&gt;exceptions-&gt;report($e);</span><br><span class="line"></span><br><span class="line">        $this-&gt;stopWorkerIfLostConnection($e);</span><br><span class="line"></span><br><span class="line">        $this-&gt;sleep(1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看connection-&gt;pop($queue)这里我是redis所以直接查看RedisQueue下的pop方法。先查看migrate，该方法会将延时或过期的队列推到list队列里面去</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$this-&gt;migrate($prefixed = $this-&gt;getQueue($queue));</span><br><span class="line"></span><br><span class="line">protected function migrate($queue)</span><br><span class="line">&#123;</span><br><span class="line">    // 将延时队列推送到list</span><br><span class="line">    $this-&gt;migrateExpiredJobs($queue.&#x27;:delayed&#x27;, $queue);</span><br><span class="line"></span><br><span class="line">    // 将过期队列推送到list</span><br><span class="line">    if (! is_null($this-&gt;retryAfter)) &#123;</span><br><span class="line">        $this-&gt;migrateExpiredJobs($queue.&#x27;:reserved&#x27;, $queue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后查看migrateExpiredJobs方法具体实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public function migrateExpiredJobs($from, $to)</span><br><span class="line">&#123;</span><br><span class="line">    return $this-&gt;getConnection()-&gt;eval(</span><br><span class="line">        LuaScripts::migrateExpiredJobs(), 3, $from, $to, $to.&#x27;:notify&#x27;, $this-&gt;currentTime()</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发现执行了lua脚本，然后看看lua脚本具体实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">    /**</span><br><span class="line">     * Get the Lua script to migrate expired jobs back onto the queue.</span><br><span class="line">     *</span><br><span class="line">     * KEYS[1] - The queue we are removing jobs from, for example: queues:foo:reserved</span><br><span class="line">     * KEYS[2] - The queue we are moving jobs to, for example: queues:foo</span><br><span class="line">     * KEYS[3] - The notification list for the queue we are moving jobs to, for example queues:foo:notify</span><br><span class="line">     * ARGV[1] - The current UNIX timestamp</span><br><span class="line">     *</span><br><span class="line">     * @return string</span><br><span class="line">     */</span><br><span class="line">    public static function migrateExpiredJobs()</span><br><span class="line">    &#123;</span><br><span class="line">        return &lt;&lt;&lt;&#x27;LUA&#x27;</span><br><span class="line">-- Get all of the jobs with an expired &quot;score&quot;...</span><br><span class="line">local val = redis.call(&#x27;zrangebyscore&#x27;, KEYS[1], &#x27;-inf&#x27;, ARGV[1])</span><br><span class="line"></span><br><span class="line">-- If we have values in the array, we will remove them from the first queue</span><br><span class="line">-- and add them onto the destination queue in chunks of 100, which moves</span><br><span class="line">-- all of the appropriate jobs onto the destination queue very safely.</span><br><span class="line">if(next(val) ~= nil) then</span><br><span class="line">    redis.call(&#x27;zremrangebyrank&#x27;, KEYS[1], 0, #val - 1)</span><br><span class="line"></span><br><span class="line">    for i = 1, #val, 100 do</span><br><span class="line">        redis.call(&#x27;rpush&#x27;, KEYS[2], unpack(val, i, math.min(i+99, #val)))</span><br><span class="line">        -- Push a notification for every job that was migrated...</span><br><span class="line">        for j = i, math.min(i+99, #val) do</span><br><span class="line">            redis.call(&#x27;rpush&#x27;, KEYS[3], 1)</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">return val</span><br><span class="line">LUA;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>发现会将小于当前时间戳的成员从集合中取出来然后迁移到队列里面去，并且记录迁移的数量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Listen to the given queue in a loop.</span><br><span class="line"> *</span><br><span class="line"> * @param  string  $connectionName</span><br><span class="line"> * @param  string  $queue</span><br><span class="line"> * @param  \Illuminate\Queue\WorkerOptions  $options</span><br><span class="line"> * @return int</span><br><span class="line">*/</span><br><span class="line">public function daemon($connectionName, $queue, WorkerOptions $options)</span><br><span class="line">&#123;</span><br><span class="line">    while (true) &#123;</span><br><span class="line">      </span><br><span class="line"></span><br><span class="line">        // First, we will attempt to get the next job off of the queue. We will also</span><br><span class="line">        // register the timeout handler and reset the alarm for this job so it is</span><br><span class="line">        // not stuck in a frozen state forever. Then, we can fire off this job.</span><br><span class="line">        $job = $this-&gt;getNextJob(</span><br><span class="line">            $this-&gt;manager-&gt;connection($connectionName), $queue</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        if ($supportsAsyncSignals) &#123;</span><br><span class="line">            $this-&gt;registerTimeoutHandler($job, $options);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // If the daemon should run (not in maintenance mode, etc.), then we can run</span><br><span class="line">        // fire off this job for processing. Otherwise, we will need to sleep the</span><br><span class="line">        // worker so no more jobs are processed until they should be processed.</span><br><span class="line">        if ($job) &#123;</span><br><span class="line">            $jobsProcessed++;</span><br><span class="line"></span><br><span class="line">            $this-&gt;runJob($job, $connectionName, $options);</span><br><span class="line"></span><br><span class="line">            if ($options-&gt;rest &gt; 0) &#123;</span><br><span class="line">                $this-&gt;sleep($options-&gt;rest);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            $this-&gt;sleep($options-&gt;sleep);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if ($supportsAsyncSignals) &#123;</span><br><span class="line">            $this-&gt;resetTimeoutHandler();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // Finally, we will check to see if we have exceeded our memory limits or if</span><br><span class="line">        // the queue should restart based on other indications. If so, we&#x27;ll stop</span><br><span class="line">        // this worker and let whatever is &quot;monitoring&quot; it restart the process.</span><br><span class="line">        $status = $this-&gt;stopIfNecessary(</span><br><span class="line">            $options, $lastRestart, $startTime, $jobsProcessed, $job</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        if (! is_null($status)) &#123;</span><br><span class="line">            return $this-&gt;stop($status);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><!-- flag of hidden posts -->
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/laravel/" rel="tag"># laravel</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">dioroxic</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
