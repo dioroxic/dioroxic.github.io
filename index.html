@@ -886,107 +886,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>项目执行composer install时显示<a href="mailto:&#103;&#x69;&#116;&#x40;&#103;&#105;&#116;&#x68;&#117;&#98;&#x2e;&#x63;&#x6f;&#109;">&#103;&#x69;&#116;&#x40;&#103;&#105;&#116;&#x68;&#117;&#98;&#x2e;&#x63;&#x6f;&#109;</a>‘s password。</p>
+          <h1 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h1><p>项目执行composer install时显示<a href="mailto:&#103;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;">&#103;&#x69;&#x74;&#x40;&#103;&#x69;&#x74;&#x68;&#117;&#98;&#46;&#x63;&#x6f;&#x6d;</a>‘s password。</p>
 <h1 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h1><p>用composer install -vvv命令显示</p>
 <pre><code>Failed to download 包名 from dist: curl error 60 while downloading 包github地址: no alternative certificate subject name matches target host name &#39;api.github.com&#39; Now trying to download from source
 </code></pre>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/01/composer-install-error/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/30/the-problem-of-invalid-laravel-routing/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="dioroxic">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="dioroxic的博客">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | dioroxic的博客">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/30/the-problem-of-invalid-laravel-routing/" class="post-title-link" itemprop="url">记laravel框架在正式环境更新代码之后请求接口返回Call to a member function getModel() on null的问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-05-30 00:00:00" itemprop="dateCreated datePublished" datetime="2022-05-30T00:00:00+08:00">2022-05-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-07-15 14:18:50" itemprop="dateModified" datetime="2024-07-15T14:18:50+08:00">2024-07-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="具体经过"><a href="#具体经过" class="headerlink" title="具体经过"></a>具体经过</h1><p>在正式服拉取最新代码之后，新增的接口前端反映无法请求成功，调查日志发现接口返回的信息是Call to a member function getModel() on null。</p>
-<h1 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h1><p>首先Call to a member function getModel() on null这条信息的意思是接口地址访问错误，或者接口地址不存在，<br>查看routes&#x2F;api.php文件发现有定义路由，但是请求接口却返回地址不存在。</p>
-<p>初步判断可能是缓存了路由，导致请求访问不到最新的路由，使用此命令清除路由缓存</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/30/the-problem-of-invalid-laravel-routing/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1081,6 +987,100 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/05/30/php-swoole-websocket/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/30/the-problem-of-invalid-laravel-routing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="dioroxic">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/05/30/the-problem-of-invalid-laravel-routing/" class="post-title-link" itemprop="url">记laravel框架在正式环境更新代码之后请求接口返回Call to a member function getModel() on null的问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-30 00:00:00" itemprop="dateCreated datePublished" datetime="2022-05-30T00:00:00+08:00">2022-05-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-07-15 14:18:50" itemprop="dateModified" datetime="2024-07-15T14:18:50+08:00">2024-07-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="具体经过"><a href="#具体经过" class="headerlink" title="具体经过"></a>具体经过</h1><p>在正式服拉取最新代码之后，新增的接口前端反映无法请求成功，调查日志发现接口返回的信息是Call to a member function getModel() on null。</p>
+<h1 id="解决过程"><a href="#解决过程" class="headerlink" title="解决过程"></a>解决过程</h1><p>首先Call to a member function getModel() on null这条信息的意思是接口地址访问错误，或者接口地址不存在，<br>查看routes&#x2F;api.php文件发现有定义路由，但是请求接口却返回地址不存在。</p>
+<p>初步判断可能是缓存了路由，导致请求访问不到最新的路由，使用此命令清除路由缓存</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/05/30/the-problem-of-invalid-laravel-routing/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
