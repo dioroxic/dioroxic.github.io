@@ -28,7 +28,7 @@
 <meta property="og:description" content="什么是tokenToken是服务端生成的一串字符串，以作客户端进行请求的一个令牌，当第一次登录后，服务器生成一个Token便将此Token返回给客户端，以后客户端只需带上这个Token前来请求数据即可，无需再次带上用户名和密码。 特点 token本身无需存储数据，直接去数据库验证用户对应的token对不对的上 需要维护token状态，所以可以实现指定令牌作废的功能  如何实现">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-23T16:00:00.000Z">
-<meta property="article:modified_time" content="2024-07-15T06:21:03.174Z">
+<meta property="article:modified_time" content="2024-07-22T07:54:10.197Z">
 <meta property="article:author" content="dioroxic">
 <meta property="article:tag" content="jwt">
 <meta property="article:tag" content="token">
@@ -130,7 +130,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -141,7 +141,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -204,7 +204,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-07-15 14:21:03" itemprop="dateModified" datetime="2024-07-15T14:21:03+08:00">2024-07-15</time>
+      <time title="修改时间：2024-07-22 15:54:10" itemprop="dateModified" datetime="2024-07-22T15:54:10+08:00">2024-07-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -238,7 +238,7 @@
 <h1 id="什么jwt"><a href="#什么jwt" class="headerlink" title="什么jwt"></a>什么jwt</h1><p>Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（(RFC 7519)<br>.该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。</p>
 <h2 id="如何实现-1"><a href="#如何实现-1" class="headerlink" title="如何实现"></a>如何实现</h2><p>jwt由三部分组成，第一部分为头部（header)，第二部分为载荷（payload)<br>，第三部分是签名（signature)，将三部分组合在一起就构成了jwt字符串</p>
 <h3 id="header-头部"><a href="#header-头部" class="headerlink" title="header 头部"></a>header 头部</h3><p>头部主要描述了jwt的加密方式，以及类型（统一写成JWT）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;typ&quot;: &quot;JWT&quot;,</span><br><span class="line">  &quot;alg&quot;: &quot;HS256&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;typ&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JWT&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;alg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>将上面的json对象进行base64编码就得到了在jwt中作为第一部分的header。</p>
 <h3 id="payload-载荷"><a href="#payload-载荷" class="headerlink" title="payload 载荷"></a>payload 载荷</h3><p>载荷主要存储一些有效信息（也是json），比如过期时间、用户id等。载荷有默认标准字段（选填）</p>
@@ -246,7 +246,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">iss: jwt签发者</span><br><span class="line">sub: jwt所面向的用户</span><br><span class="line">aud: 接收jwt的一方</span><br><span class="line">exp: jwt的过期时间，这个过期时间必须要大于签发时间</span><br><span class="line">nbf: 定义在什么时间之前，该jwt都是不可用的.</span><br><span class="line">iat: jwt的签发时间</span><br><span class="line">jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。</span><br></pre></td></tr></table></figure>
 
 <p>也可以添加自定义字段如userId</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;userID&quot;: &quot;123456&quot;,</span><br><span class="line">  &quot;role&quot;: &quot;user&quot;,</span><br><span class="line">  &quot;exp&quot;: 1679718315</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;userID&quot;</span><span class="punctuation">:</span> <span class="string">&quot;123456&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;exp&quot;</span><span class="punctuation">:</span> <span class="number">1679718315</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>将上面的json对象进行base64编码就得到了在jwt中作为第二部分的payload。</p>
 <h3 id="签名"><a href="#签名" class="headerlink" title="签名"></a>签名</h3><p>jwt的第三部分是一个签名信息，签名信息由三部分组成：</p>
@@ -256,7 +256,7 @@
 <li>secret(密匙用于HS256加密)</li>
 </ol>
 <p>这个部分需要base64加密后的header和base64加密后的payload使用.连接组成的字符串，然后通过header中声明的加密方式进行加盐secret组合加密，然后就构成了jwt的第三部分。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// php</span><br><span class="line">$base64String = base64_encode($header).base64_encode($payload);</span><br><span class="line">$signature = hash_hmac(&#x27;sha256&#x27;, $base64String, &#x27;secret&#x27;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$base64String</span> = <span class="title function_ invoke__">base64_encode</span>(<span class="variable">$header</span>).<span class="title function_ invoke__">base64_encode</span>(<span class="variable">$payload</span>);</span><br><span class="line"><span class="variable">$signature</span> = <span class="title function_ invoke__">hash_hmac</span>(<span class="string">&#x27;sha256&#x27;</span>, <span class="variable">$base64String</span>, <span class="string">&#x27;secret&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
 <p>最后”{$header}.{$payload}.{$signature}”这样拼接在一起jwt token就生成完毕了</p>
 <h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
