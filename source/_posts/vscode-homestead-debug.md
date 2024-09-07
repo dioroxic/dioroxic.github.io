@@ -1,11 +1,11 @@
 ---
 title: "vscode+homestead 配置xdebug"
 categories:
-  - php
+- php
 tags:
-  - php
-  - xdebug
-  - vscode
+- php
+- xdebug
+- vscode
 date: 2021-10-26
 ---
 # 起因

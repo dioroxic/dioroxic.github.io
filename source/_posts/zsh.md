@@ -1,10 +1,10 @@
 ---
 title: "zsh 配置"
 categories:
-  - linux
+- linux
 tags:
-  - linux
-  - zsh
+- linux
+- zsh
 date: 2023-01-19
 ---
 

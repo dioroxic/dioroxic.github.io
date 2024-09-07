@@ -1,11 +1,11 @@
 ---
 title: "Mysql 锁"
 categories:
-  - mysql
+- mysql
 tags:
-  - mysql
-  - 锁
-  - 面试
+- mysql
+- 锁
+- 面试
 date: 2021-09-24
 ---
 # mysql锁的类型
@@ -52,7 +52,7 @@ date: 2021-09-24
 
 # mysql上锁命令
 表锁：
-<br/>
+
 隐式上锁（默认，自动加锁自动释放）
 ```
 select #默认上共享锁
@@ -70,8 +70,7 @@ lock table tableName write; #排他锁
 unlock tables; # 解锁所有表
 ```
 
-行锁
-<br/>
+行锁：
 隐式上锁（默认，自动加锁自动释放）
 ```
 select #不上锁

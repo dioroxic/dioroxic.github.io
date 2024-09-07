@@ -1,11 +1,11 @@
 ---
 title: "记laravel框架在正式环境更新代码之后请求接口返回Call to a member function getModel() on null的问题"
 categories:
-  - php
+- php
 tags:
-  - php
-  - laravel
-date: 2022-05-30 
+- php
+- laravel
+date: 2022-05-30
 ---
 
 # 具体经过

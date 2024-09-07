@@ -1,11 +1,11 @@
 ---
 title: "homestead composer install显示git@github.com's password"
 categories:
-  - php
+- php
 tags:
-  - php
-  - composer
-  - homestead
+- php
+- composer
+- homestead
 date: 2022-06-01
 ---
 # 起因

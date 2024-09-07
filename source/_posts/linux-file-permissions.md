@@ -1,10 +1,10 @@
 ---
 title: "linux 文件权限"
 categories:
-  - linux
+- linux
 tags:
-  - linux
-  - 权限
+- linux
+- 权限
 date: 2023-11-27
 ---
 

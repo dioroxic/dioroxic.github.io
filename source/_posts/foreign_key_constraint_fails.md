@@ -1,10 +1,10 @@
 ---
 title: "laravel 创建外键失败"
 categories:
-  - php
+- php
 tags:
-  - php
-  - laravel
+- php
+- laravel
 date: 2021-09-24
 ---
 

@@ -1,10 +1,10 @@
 ---
 title: "homestead 错误处理集合"
 categories:
-  - php
+- php
 tags:
-  - php
-  - homestead
+- php
+- homestead
 date: 2022-11-10
 ---
 # 1、启动时报错 Stderr: VBoxManage.exe: error: Not in a hypervisor partition (HVP=0) (VERR_NEM_NOT_AVAILABLE).

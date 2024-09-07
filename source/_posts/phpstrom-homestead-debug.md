@@ -1,11 +1,11 @@
 ---
 title: "phpstrom+homestead 配置xdebug"
 categories:
-  - php
+- php
 tags:
-  - php
-  - xdebug
-  - phpstrom
+- php
+- xdebug
+- phpstrom
 date: 2021-11-01
 ---
 

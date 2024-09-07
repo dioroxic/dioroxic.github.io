@@ -1,12 +1,12 @@
 ---
 title: "php swoole websocket实战"
 categories:
-  - php
+- php
 tags:
-  - php
-  - php extension
-  - swoole
-  - websocket
+- php
+- php extension
+- swoole
+- websocket
 date: 2022-05-30
 ---
 # 起因

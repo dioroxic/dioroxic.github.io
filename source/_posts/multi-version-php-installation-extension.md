@@ -1,10 +1,10 @@
 ---
 title: "php 多版本安装扩展"
 categories:
-  - php
+- php
 tags:
-  - php
-  - php extension
+- php
+- php extension
 date: 2021-11-17
 ---
 因为项目中有使用imagick扩展所以需要在homestead环境中安装imagick扩展，
