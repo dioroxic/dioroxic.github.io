@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="mysql锁的类型 表锁 行锁  表锁和行锁都有的种类12345共享锁(shared lock)，也叫读锁(read lock)对上锁的数据可读不可改，必须等锁释放后才能对数据进行修改    排他锁(exclusive lock)，也叫写锁(write lock)对上锁的数据不可读不可写，必须等锁释放后才能对数据进行读和写 结论：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql 锁">
+<meta property="og:url" content="http://example.com/2021/09/24/mysql-lock/index.html">
+<meta property="og:site_name" content="dioroxic的博客">
+<meta property="og:description" content="mysql锁的类型 表锁 行锁  表锁和行锁都有的种类12345共享锁(shared lock)，也叫读锁(read lock)对上锁的数据可读不可改，必须等锁释放后才能对数据进行修改    排他锁(exclusive lock)，也叫写锁(write lock)对上锁的数据不可读不可写，必须等锁释放后才能对数据进行读和写 结论：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-09-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-07-15T06:23:50.000Z">
+<meta property="article:author" content="dioroxic">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="锁">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/09/24/mysql-lock/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/09/24/mysql-lock/","path":"2021/09/24/mysql-lock/","title":"Mysql 锁"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Mysql 锁 | dioroxic的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dioroxic的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">a lazy man</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql%E9%94%81%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">mysql锁的类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E5%92%8C%E8%A1%8C%E9%94%81%E9%83%BD%E6%9C%89%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">表锁和行锁都有的种类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">表锁实现的锁机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%8C%E9%94%81%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%94%81%E6%9C%BA%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">行锁实现的锁机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql%E4%B8%8A%E9%94%81%E5%91%BD%E4%BB%A4"><span class="nav-number">5.</span> <span class="nav-text">mysql上锁命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">6.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E9%94%81%E5%92%8C%E4%B9%90%E8%A7%82%E9%94%81"><span class="nav-number">7.</span> <span class="nav-text">悲观锁和乐观锁</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dioroxic"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">dioroxic</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/09/24/mysql-lock/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="dioroxic">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Mysql 锁 | dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Mysql 锁
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-24 00:00:00" itemprop="dateCreated datePublished" datetime="2021-09-24T00:00:00+08:00">2021-09-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-07-15 14:23:50" itemprop="dateModified" datetime="2024-07-15T14:23:50+08:00">2024-07-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="mysql锁的类型"><a href="#mysql锁的类型" class="headerlink" title="mysql锁的类型"></a>mysql锁的类型</h1><ul>
+<li>表锁</li>
+<li>行锁</li>
+</ul>
+<h1 id="表锁和行锁都有的种类"><a href="#表锁和行锁都有的种类" class="headerlink" title="表锁和行锁都有的种类"></a>表锁和行锁都有的种类</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">共享锁(shared lock)，也叫读锁(read lock)</span><br><span class="line">对上锁的数据可读不可改，必须等锁释放后才能对数据进行修改</span><br><span class="line">    </span><br><span class="line">排他锁(exclusive lock)，也叫写锁(write lock)</span><br><span class="line">对上锁的数据不可读不可写，必须等锁释放后才能对数据进行读和写</span><br></pre></td></tr></table></figure>
+<p>结论：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">读锁会阻塞写操作，不会阻塞读操作</span><br><span class="line">写锁会阻塞读和写操作</span><br></pre></td></tr></table></figure>
+
+<h1 id="表锁实现的锁机制"><a href="#表锁实现的锁机制" class="headerlink" title="表锁实现的锁机制"></a>表锁实现的锁机制</h1><p>表锁实现的效果：</p>
+<ul>
+<li>共享锁：锁住整个表，可读取表数据但是不能操作表中的数据，必须等锁释放后才能操作表中的数据</li>
+<li>排他锁：锁住整个表，不可读取表数据和操作表数据，必须等锁释放后才能读取或操作表中的数据</li>
+</ul>
+<p>表锁的优点：</p>
+<ul>
+<li>对整张表加锁</li>
+<li>开销小</li>
+<li>加锁快</li>
+<li>无死锁</li>
+<li>锁粒度大，发生锁冲突概率大，并发性低</li>
+</ul>
+<h1 id="行锁实现的锁机制"><a href="#行锁实现的锁机制" class="headerlink" title="行锁实现的锁机制"></a>行锁实现的锁机制</h1><p>行锁实现的效果：</p>
+<ul>
+<li>共享锁：锁住操作的数据，可读取数据但是不能操作数据，必须等锁释放后才能操作数据</li>
+<li>排他锁：锁住操作的数据，不可读取数据和操作数据，必须等锁释放后才能读取或操作数据</li>
+</ul>
+<p>行锁的优点</p>
+<ul>
+<li>对一行数据加锁</li>
+<li>开销大</li>
+<li>加锁慢</li>
+<li>会出现死锁</li>
+<li>锁粒度小，发生锁冲突概率最低，并发性高</li>
+</ul>
+<h1 id="mysql上锁命令"><a href="#mysql上锁命令" class="headerlink" title="mysql上锁命令"></a>mysql上锁命令</h1><p>表锁：</p>
+<p>隐式上锁（默认，自动加锁自动释放）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select #默认上共享锁</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert、update、delete #上排他锁</span><br></pre></td></tr></table></figure>
+<p>显式上锁（手动）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lock table tableName read; #共享锁</span><br><span class="line">lock table tableName write; #排他锁</span><br></pre></td></tr></table></figure>
+<p>解锁（手动）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unlock tables; # 解锁所有表</span><br></pre></td></tr></table></figure>
+
+<p>行锁：<br>隐式上锁（默认，自动加锁自动释放）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select #不上锁</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert、update、delete #上排他锁</span><br></pre></td></tr></table></figure>
+<p>显式上锁（手动）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from tableName where id = xxx in share lock; #共享锁</span><br><span class="line">select * from tableName where id = xxx for update; #排他锁</span><br></pre></td></tr></table></figure>
+<p>解锁（手动）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 提交事务（commit）</span><br><span class="line">2. 回滚事务（rollback）</span><br><span class="line">3. kill 阻塞进程</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">为什么上了写锁，别的事务还可以读操作？</span><br><span class="line">因为InnoDB有MVCC机制（多版本并发控制），可以使用快照读，而不会被阻塞。</span><br></pre></td></tr></table></figure>
+
+<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><p>什么是死锁？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">死锁是指两个或两个以上的进程在执行过程中，由于竞争资源或者由于彼此通信而造成的一种阻塞的现象，若无外力作用，它们都将无法推进下去。</span><br><span class="line">此时称系统处于死锁状态或系统产生了死锁，这些永远在互相等待的进程称为死锁进程。</span><br></pre></td></tr></table></figure>
+<p>通俗来讲就是a锁持有数据a，b锁持有数据b，他们同时都在请求对方的数据，但是因为双方都有锁所以进入互相等待状态</p>
+<p>产生死锁的四个必要条件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">（1）互斥条件：该资源任意时刻只由一个线程占有</span><br><span class="line">（理解：一个萝卜一个坑，不能一个萝卜两个坑；总结：不能共享）</span><br><span class="line">（2）请求与保持条件：一个进程因请求资源阻塞时，对已有资源保持不放。</span><br><span class="line">（理解：我得不到，你也别想得到。要死一起死，我做不到大公无私，我要死了，还把资源给你。）</span><br><span class="line">（3）不剥夺条件：线程已经获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完才能释放资源</span><br><span class="line">(理解： 只能等，不能抢。我女朋友再好看...你也不能抢，只能等我分手了，你才有机会....)</span><br><span class="line">（4）循环等待条件：若干进程形成一种头尾相接的循环等待资源关系。</span><br><span class="line">（理解：环——多角恋）</span><br></pre></td></tr></table></figure>
+
+<p>避免死锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. 加锁顺序一致，尽可能一次性锁定所需的数据行</span><br><span class="line">2. 尽量基于primary（主键）或unique key更新数据</span><br><span class="line">3. 单次操作数据量不宜过多，涉及表尽量少</span><br><span class="line">4. 减少表上索引，减少锁定资源</span><br><span class="line">5. 尽量使用较低的隔离级别</span><br><span class="line">6. 尽量使用相同条件访问数据，这样可以避免间隙锁对并发的插入影响</span><br><span class="line">7. 精心设计索引，尽量使用索引访问数据</span><br><span class="line">8. 借助相关工具：pt-deadlock-logger</span><br></pre></td></tr></table></figure>
+
+<h1 id="悲观锁和乐观锁"><a href="#悲观锁和乐观锁" class="headerlink" title="悲观锁和乐观锁"></a>悲观锁和乐观锁</h1><p>悲观锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">总是假设最坏的情况，每次取数据时都认为其他线程会修改，所以都会加（悲观）锁。一旦加锁，不同线程同时执行时,只能有一个线程执行，其他的线程在入口处等待，直到锁被释放。</span><br></pre></td></tr></table></figure>
+<p><strong>行锁和表锁就属于悲观锁</strong></p>
+<p>乐观锁</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">乐观锁顾名思义就是在操作时很乐观，认为操作不会产生并发问题(不会有其他线程对数据进行修改)，因此不会上锁。但是在更新时会判断其他线程在这之前有没有对数据进行修改，一般会使用版本号机制或CAS(compare and swap)算法实现。</span><br><span class="line">简单理解：这里的数据，别想太多，你尽管用，出问题了算我怂，即操作失败后事务回滚、提示。</span><br></pre></td></tr></table></figure>
+
+<p>参考文章：</p>
+<p>https://learnku.com/articles/39212?order_by=vote_count&</p>
+<p>https://segmentfault.com/a/1190000016611415</p>
+<p>https://blog.csdn.net/greenfloweryue/article/details/107846958</p>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/%E9%94%81/" rel="tag"># 锁</a>
+              <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/09/24/foreign_key_constraint_fails/" rel="next" title="laravel 创建外键失败">
+                  laravel 创建外键失败 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">dioroxic</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>

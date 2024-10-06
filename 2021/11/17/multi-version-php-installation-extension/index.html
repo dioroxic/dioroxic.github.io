@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.css" integrity="sha256-gkQVf8UKZgQ0HyuxL/VnacadJ+D2Kox2TCEBuNQg5+w=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="因为项目中有使用imagick扩展所以需要在homestead环境中安装imagick扩展，但是因为是多版本php所以在安装扩展的过程中遇到一些问题，所以记录一下多版本php安装扩展的踩坑过程 下载扩展源码包首先去pecl官网去下载所需要安装扩展包，这里以imagick扩展为例 1wget https:&#x2F;&#x2F;pecl.php.net&#x2F;get&#x2F;imagick-3.6.0RC2.tgz  进行解压">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php 多版本安装扩展">
+<meta property="og:url" content="http://example.com/2021/11/17/multi-version-php-installation-extension/index.html">
+<meta property="og:site_name" content="dioroxic的博客">
+<meta property="og:description" content="因为项目中有使用imagick扩展所以需要在homestead环境中安装imagick扩展，但是因为是多版本php所以在安装扩展的过程中遇到一些问题，所以记录一下多版本php安装扩展的踩坑过程 下载扩展源码包首先去pecl官网去下载所需要安装扩展包，这里以imagick扩展为例 1wget https:&#x2F;&#x2F;pecl.php.net&#x2F;get&#x2F;imagick-3.6.0RC2.tgz  进行解压">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-07-15T06:18:12.000Z">
+<meta property="article:author" content="dioroxic">
+<meta property="article:tag" content="php">
+<meta property="article:tag" content="php extension">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2021/11/17/multi-version-php-installation-extension/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2021/11/17/multi-version-php-installation-extension/","path":"2021/11/17/multi-version-php-installation-extension/","title":"php 多版本安装扩展"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>php 多版本安装扩展 | dioroxic的博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">dioroxic的博客</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">a lazy man</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E6%89%A9%E5%B1%95%E6%BA%90%E7%A0%81%E5%8C%85"><span class="nav-number">1.</span> <span class="nav-text">下载扩展源码包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E8%A1%8C%E8%A7%A3%E5%8E%8B"><span class="nav-number">2.</span> <span class="nav-text">进行解压</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">开始编译安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E5%90%AFphp-fpm"><span class="nav-number">4.</span> <span class="nav-text">重启php-fpm</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E7%9A%84%E6%96%87%E7%AB%A0%E9%93%BE%E6%8E%A5"><span class="nav-number">5.</span> <span class="nav-text">参考的文章链接</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="dioroxic"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">dioroxic</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/11/17/multi-version-php-installation-extension/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="dioroxic">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="php 多版本安装扩展 | dioroxic的博客">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          php 多版本安装扩展
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-17 00:00:00" itemprop="dateCreated datePublished" datetime="2021-11-17T00:00:00+08:00">2021-11-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2024-07-15 14:18:12" itemprop="dateModified" datetime="2024-07-15T14:18:12+08:00">2024-07-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/php/" itemprop="url" rel="index"><span itemprop="name">php</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>因为项目中有使用imagick扩展所以需要在homestead环境中安装imagick扩展，<br>但是因为是多版本php所以在安装扩展的过程中遇到一些问题，所以记录一下多版本php安装扩展的踩坑过程</p>
+<h1 id="下载扩展源码包"><a href="#下载扩展源码包" class="headerlink" title="下载扩展源码包"></a>下载扩展源码包</h1><p>首先去pecl官网去下载所需要安装扩展包，这里以imagick扩展为例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://pecl.php.net/get/imagick-3.6.0RC2.tgz</span><br></pre></td></tr></table></figure>
+
+<h1 id="进行解压"><a href="#进行解压" class="headerlink" title="进行解压"></a>进行解压</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf imagick-3.6.0RC2.tgz</span><br></pre></td></tr></table></figure>
+
+<h1 id="开始编译安装"><a href="#开始编译安装" class="headerlink" title="开始编译安装"></a>开始编译安装</h1><p>解压完成后，cd进入文件夹</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd imagick-3.6.0RC2</span><br></pre></td></tr></table></figure>
+
+<p>首先需要phpize（如果没有安装，则须安装php-dev）默认homestead是安装了的所以不需要再安装一遍</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">phpize &amp;&amp; ./configure –with-php-config=/usr/bin/php-config7.4（指定版本的php-config地址）</span><br></pre></td></tr></table></figure>
+
+<p>这里.&#x2F;configure可能会报错，信息为configure: error: not found. Please provide a path to MagickWand-config or Wand-config program.</p>
+<p></p>
+
+<p>解决方案为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br><span class="line">sudo apt-get install libmagickcore-dev libmagickwand-dev</span><br></pre></td></tr></table></figure>
+
+<p>然后进行编译安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make &amp;&amp; sudo make install</span><br></pre></td></tr></table></figure>
+
+<p>没问题的话就接着做以下操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/php/你想要安装的php版本/mods-available/</span><br><span class="line"></span><br><span class="line">sudo vim imagick.ini</span><br><span class="line">填入：&#x27;extension=imagick.so&#x27; 并保存</span><br><span class="line"></span><br><span class="line">cd /etc/php/你想要安装的php版本/fpm/conf.d</span><br><span class="line">sudo ln -s /etc/php/你想要安装的php版本/mods-available/imagick.ini 20-imagick.ini</span><br></pre></td></tr></table></figure>
+
+<h1 id="重启php-fpm"><a href="#重启php-fpm" class="headerlink" title="重启php-fpm"></a>重启php-fpm</h1><p>编译完成后需要重启fpm，首先查看php-fpm的master进程号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ps aux|grep php-fpm</span><br><span class="line"></span><br><span class="line">root         697  0.0  1.1 257164 45608 ?        Ss   01:08   0:00 php-fpm: master process (/etc/php/7.4/fpm/php-fpm.conf)</span><br><span class="line">root         698  0.0  1.1 259996 46788 ?        Ss   01:08   0:00 php-fpm: master process (/etc/php/8.0/fpm/php-fpm.conf)</span><br><span class="line">vagrant      828  0.0  0.4 260400 17552 ?        S    01:08   0:00 php-fpm: pool www</span><br><span class="line">vagrant      830  0.0  0.4 260400 17556 ?        S    01:08   0:00 php-fpm: pool www</span><br><span class="line">vagrant    16220  0.0  1.3 266276 55740 ?        S    03:04   0:00 php-fpm: pool www</span><br><span class="line">vagrant    16221  0.0  1.4 267052 58592 ?        S    03:04   0:00 php-fpm: pool www</span><br><span class="line">vagrant    17123  0.0  0.0   9028   672 pts/0    S+   03:32   0:00 grep --color=auto --exclude-dir=.bzr --exclude-dir=CVS --exclude-dir=.git --exclude-dir=.hg --exclude-dir=.svn --exclude-dir=.idea --exclude-dir=.tox php-fpm</span><br></pre></td></tr></table></figure>
+<p>然后kill主进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kill -USR2 679</span><br></pre></td></tr></table></figure>
+<p>就可以了</p>
+<h1 id="参考的文章链接"><a href="#参考的文章链接" class="headerlink" title="参考的文章链接"></a>参考的文章链接</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_16885135/article/details/78130281">https://blog.csdn.net/qq_16885135/article/details/78130281</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/cpainter/article/details/53401831">https://blog.csdn.net/cpainter/article/details/53401831</a><br><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_9025736/2372445">https://blog.51cto.com/u_9025736/2372445</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/113112043">https://zhuanlan.zhihu.com/p/113112043</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/php/" rel="tag"># php</a>
+              <a href="/tags/php-extension/" rel="tag"># php extension</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/11/01/phpstrom-homestead-debug/" rel="prev" title="phpstrom+homestead 配置xdebug">
+                  <i class="fa fa-angle-left"></i> phpstrom+homestead 配置xdebug
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/05/30/php-swoole-websocket/" rel="next" title="php swoole websocket实战">
+                  php swoole websocket实战 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">dioroxic</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script size="300" alpha="0.6" zIndex="-1" src="https://cdnjs.cloudflare.com/ajax/libs/ribbon.js/1.0.2/ribbon.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.31/fancybox/fancybox.umd.js" integrity="sha256-a+H7FYzJv6oU2hfsfDGM2Ohw/cR9v+hPfxHCLdmCrE8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+  <script src="/js/third-party/pace.js"></script>
+
+
+  
+
+
+
+
+
+</body>
+</html>
